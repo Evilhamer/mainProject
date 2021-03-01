@@ -3,14 +3,11 @@ from wsgiFraimwork import render, Application, DebugApplication, FakeApplication
 from models import TrainingSite
 from loggin_mode import Logger, debug
 
-# Создание копирование курса, список курсов
-# Регистрация пользователя, список пользователей
-# Логирование
-
 site = TrainingSite()
 logger = Logger('main')
 
 
+@debug
 def main_view(request):
     logger.log('Список курсов')
     return '200 OK', render('course_list.html', objects_list=site.courses)
@@ -30,20 +27,18 @@ def create_course(request):
 
             course = site.create_course('record', name, category)
             site.courses.append(course)
-        # редирект?
-        # return '302 Moved Temporarily', render('create_course.html')
-        # Для начала можно без него
+
         return '200 OK', render('create_course.html')
     else:
         categories = site.categories
         return '200 OK', render('create_course.html', categories=categories)
 
 
+@debug
 def create_category(request):
     if request['method'] == 'POST':
-        # метод пост
         data = request['data']
-        # print(data)
+
         name = data['name']
 
         name = Application.decode_value(name)
@@ -56,9 +51,6 @@ def create_category(request):
         new_category = site.create_category(name, category)
 
         site.categories.append(new_category)
-        # редирект?
-        # return '302 Moved Temporarily', render('create_course.html')
-        # Для начала можно без него
         return '200 OK', render('create_category.html')
     else:
         categories = site.categories
@@ -83,8 +75,8 @@ front_controllers = [
 application = Application(urlpatterns, front_controllers)
 
 
-#application = DebugApplication(urlpatterns, front_controllers)
-#application = FakeApplication(urlpatterns, front_controllers)
+# application = DebugApplication(urlpatterns, front_controllers)
+# application = FakeApplication(urlpatterns, front_controllers)
 
 
 @application.add_route('/copy-course/')
@@ -105,6 +97,7 @@ def copy_course(request):
 def category_list(request):
     logger.log('Список категорий')
     return '200 OK', render('category_list.html', objects_list=site.categories)
+
 
 with make_server('', 8000, application) as httpd:
     print("Serving on port 8000...")

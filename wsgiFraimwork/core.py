@@ -1,11 +1,12 @@
 import quopri
 from wsgiref.util import setup_testing_defaults
 
+
 class Application:
-    def decode_value(val):
-        val_b = bytes(val.replace('%', '=').replace("+", " "), 'UTF-8')
-        val_decode_str = quopri.decodestring(val_b)
-        return val_decode_str.decode('UTF-8')
+    def decode_value(value):
+        value_b = bytes(value.replace('%', '=').replace("+", " "), 'UTF-8')
+        value_decode_str = quopri.decodestring(value_b)
+        return value_decode_str.decode('UTF-8')
 
     def add_route(self, url):
         # паттерн декоратор
@@ -31,13 +32,11 @@ class Application:
             result = self.parse_input_data(data_str)
         return result
 
-
     def get_wsgi_input_data(self, env):
         content_length_data = env.get('CONTENT_LENGTH')
         content_length = int(content_length_data) if content_length_data else 0
         data = env['wsgi.input'].read(content_length) if content_length > 0 else b''
         return data
-
 
     def __init__(self, urlpatterns, front_controllers):
         self.urlpatterns = urlpatterns
@@ -59,13 +58,9 @@ class Application:
 
         if path in self.urlpatterns:
             view = self.urlpatterns[path]
-            request = {}
-            request['method'] = method
-            request['data'] = data
-            request['request_params'] = request_params
-
+            request = {'method': method, 'data': data,
+                       'request_params': request_params}
             # добавляем в запрос данные из front controllers
-
             for controller in self.front_controllers:
                 controller(request)
             code, body = view(request)
