@@ -1,6 +1,7 @@
 from reusepatterns.prototypes import PrototypeMixin
 
 
+
 # абстрактный пользователь
 class User:
     pass
