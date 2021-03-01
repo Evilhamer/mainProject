@@ -5,8 +5,8 @@ urlpatterns = {
     '/': views.index_view,
     '/authors/': views.authors_view,
     '/contacts/': views.contact_view,
-
 }
+
 
 
 # пример Front controller
@@ -18,7 +18,10 @@ front_controllers = [
     secret_front
 ]
 
+
+
 application = Application(urlpatterns, front_controllers)
+
 
 # Запуск:
 # gunicorn main:application
